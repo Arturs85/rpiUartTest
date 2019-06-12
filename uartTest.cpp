@@ -11,8 +11,10 @@
 	int UartTest::uart0_filestream = -1;
 	int UartTest::tx_size = 0;
 	pthread_mutex_t UartTest::mutexSend = PTHREAD_MUTEX_INITIALIZER;
-	char UartTest::tx_buffer[255];// ={0,0,0,0,0,0,0,0,0,0} ;
+	pthread_mutex_t UartTest::mutexReceive = PTHREAD_MUTEX_INITIALIZER;
 	
+	char UartTest::tx_buffer[255];// ={0,0,0,0,0,0,0,0,0,0} ;
+	vector<uint8_t> UartTest::rxframe;
 	void UartTest::initialize()
 	{
 	//-------------------------
@@ -119,17 +121,52 @@ nanosleep (&ts, NULL);//sleep 15 ms
 	else if(rx_length>0)
 	{
 	//Bytes received
-	rx_buffer[rx_length] = '\0';
+	//rx_buffer[rx_length] = '\0';
 	printf("%i bytes read : \n", rx_length);//, rx_buffer);
+	pthread_mutex_lock( &mutexReceive );
+
 	for(int i =0;i<rx_length;i++){
+		rxframe.push_back(rx_buffer[i]);
 		cout<<+rx_buffer[i]<<" ";
 		}
+	pthread_mutex_unlock( &mutexReceive );
+
 		cout<<"\n";
 	}
 	}//end while
 	//printf("read returns %d\n", rx_length);
 	}
 	}
+	
+	void UartTest::clearRxFrame()
+	{
+	rxframe.clear();
+		}
+		
+	vector<uint8_t> UartTest::readNumberOfBytes(uint8_t noOfBytes )
+	{
+	vector<uint8_t> result;
+		int cyclesCounter =100;//timeout = 10*1.5 ms
+struct timespec ts = {0, 1500000L };
+
+while(cyclesCounter--)
+{
+
+	pthread_mutex_lock( &mutexReceive );
+if(rxframe.size()>= noOfBytes)
+	{
+	result = rxframe;
+rxframe.clear();
+cyclesCounter=0;
+}
+
+	pthread_mutex_unlock( &mutexReceive );
+if(cyclesCounter ==0) break;
+nanosleep (&ts, NULL);//sleep 1.5 ms
+			
+}		
+		return result;
+		}
 	
 	void UartTest::startReceiveing(){// and sending
 	int iret1 = pthread_create( &receivingThreadUart, NULL, receive, 0);

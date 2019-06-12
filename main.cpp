@@ -46,7 +46,30 @@ cout<<"\n";
 	char *ar = &mystr[0];
 	//printf("first char you entered: %d", (uint8_t)(*ar));
 	//uartTest.setDataToTransmit(ar, mystr.size());
-	uartTest.setDataToTransmit(comm);
+		uartTest.setDataToTransmit(comm);
+
+	if(comm[0]==142 && comm[1]==25){
+	vector<uint8_t> ch = uartTest.readNumberOfBytes(2);
+	cout<<"vector ch size: "<<ch.size()<<"\n";
+	if(ch.size()==2)
+	{//convertData
+		
+		uint16_t* batCharge = reinterpret_cast<uint16_t*>(&ch[0]);
+		cout<<"bat charge received: "<<*batCharge<<"mAh\n";
+		}
+		}
+	
+	else if(comm[0]==142 && comm[1]==26){
+	vector<uint8_t> ch = uartTest.readNumberOfBytes(2);
+	cout<<"vector ch size: "<<ch.size()<<"\n";
+	if(ch.size()==2)
+	{//convertData
+		
+		uint16_t* batCapacity = reinterpret_cast<uint16_t*>(&ch[0]);
+		cout<<"bat capacity received: "<<*batCapacity<<"mAh\n";
+		}
+		}
+	
 comm.clear();
 	
 	}
