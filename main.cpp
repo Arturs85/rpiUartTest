@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     uartTest.initialize();
 
     //uartTest.send();
-    uartTest.startReceiveing();
+    uartTest.startReceiveing();//starts receiving and sending threads
 
     RoombaController roombaController(&uartTest);
     std::string tmp = "test data";
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
 
 
         std::istringstream ss(mystr);
-        cout<<"you entered: ";
+        cout<<"you entered: "<<mystr;
 
         while(!ss.eof())// read integers from string
         {

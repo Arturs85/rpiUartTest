@@ -4,6 +4,7 @@
 
 RoombaController::RoombaController(UartTest *uartDevice)
 {
+    cout<<"roomba controller constructor\n";
     this->uartDevice=uartDevice;
 }
 
@@ -19,9 +20,10 @@ uint8_t RoombaController::readLightBumps()
 
         data = reinterpret_cast<uint8_t*>(&ch[0]);
         //cout<<"bat charge received: "<<*batCharge<<"mAh\n";
-    }
-    else *data =0;
     return *data;
+    }
+    else return 0;
+    
 
 }
 
@@ -36,9 +38,10 @@ uint16_t RoombaController::readBattCapacity()
     {//convertData
 
         data = reinterpret_cast<uint16_t*>(&ch[0]);
-    }
-    else *data =0;
     return *data;
+    }
+    else return 0;
+    
 }
 
 
@@ -54,9 +57,10 @@ uint16_t RoombaController::readBattCharge()
 
         data = reinterpret_cast<uint16_t*>(&ch[0]);
         //cout<<"bat charge received: "<<*batCharge<<"mAh\n";
-    }
-    else *data =0;
     return *data;
+    }
+    else return 0;
+    
 
 
 }
