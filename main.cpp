@@ -88,7 +88,21 @@ uint16_t ch = roombaController.readBattCharge();
 
 cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/ca)<<" %\n";
     }
+        else if(!command.compare("turn r")){
+        roombaController.drive(50,-1);
         }
+        else if(!command.compare("stop")){
+        roombaController.drive(0,0);
+        }
+        else if(!command.compare("dist")){
+        int16_t dist = roombaController.readDistance();
+        cout<<"distance: "<<dist;
+        }
+        else if(!command.compare("angle")){
+        int16_t ang = roombaController.readAngle();
+        cout<<"angle: "<<ang;
+        }
+    }
     uartTest.waitUartThreadsEnd();
 
     return 0;

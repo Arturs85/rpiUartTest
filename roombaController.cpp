@@ -27,6 +27,24 @@ uint8_t RoombaController::readLightBumps()
 
 }
 
+uint8_t RoombaController::readBumpsnWheelDrops()
+{
+    uint8_t* data;
+    uartDevice->setDataToTransmit(bumpsRequest);
+
+    vector<uint8_t> ch = uartDevice->readNumberOfBytes(1);
+   // cout<<"vector ch size: "<<ch.size()<<"\n";
+    if(ch.size()==1)
+    {//convertData
+
+        data = reinterpret_cast<uint8_t*>(&ch[0]);
+        //cout<<"bat charge received: "<<*batCharge<<"mAh\n";
+    return *data;
+    }
+    else return 0;
+
+}
+
 uint16_t RoombaController::readBattCapacity()
 {
     uint16_t* data;
@@ -62,5 +80,55 @@ uint16_t RoombaController::readBattCharge()
     else return 0;
     
 
+
+
+}
+
+int16_t RoombaController::readDistance()
+{
+    int16_t* data;
+    uartDevice->setDataToTransmit(distanceRequest);
+
+    vector<uint8_t> ch = uartDevice->readNumberOfBytes(2);
+   // cout<<"vector ch size: "<<ch.size()<<"\n";
+    if(ch.size()==2)
+    {//convertData
+
+        data = reinterpret_cast<int16_t*>(&ch[0]);
+        //cout<<"bat charge received: "<<*batCharge<<"mAh\n";
+    return *data;
+    }
+    else return 0;
+
+}
+
+int16_t RoombaController::readAngle()
+{
+    int16_t* data;
+    uartDevice->setDataToTransmit(angleRequest);
+
+    vector<uint8_t> ch = uartDevice->readNumberOfBytes(2);
+   // cout<<"vector ch size: "<<ch.size()<<"\n";
+    if(ch.size()==2)
+    {//convertData
+
+        data = reinterpret_cast<int16_t*>(&ch[0]);
+        //cout<<"bat charge received: "<<*batCharge<<"mAh\n";
+    return *data;
+    }
+    else return 0;
+
+}
+
+void RoombaController::drive(int16_t velocity, int16_t radius)
+{
+    int16_t array[3]={137,velocity,radius};
+    char* pt = reinterpret_cast<char*>(array);
+    uartDevice->setDataToTransmit(pt+1,4);// +1 lai nesūta nulles pirms '137' kommandas
+
+}
+
+void RoombaController::sevenSegmentDisplay(uint8_t number)
+{
 
 }
