@@ -122,10 +122,10 @@ int16_t RoombaController::readAngle()
 
 void RoombaController::drive(int16_t velocity, int16_t radius)
 {
-    int16_t array[3]={137,velocity,radius};
+    uint8_t array[5]={137,*(reinterpret_cast<uint8_t*>(&velocity)+1),*(reinterpret_cast<uint8_t*>(&velocity)),*(reinterpret_cast<uint8_t*>(&radius)+1),*(reinterpret_cast<uint8_t*>(&radius))};
     char* pt = reinterpret_cast<char*>(array);
-    uartDevice->setDataToTransmit(pt+1,4);// +1 lai nesūta nulles pirms '137' kommandas
-
+    uartDevice->setDataToTransmit(pt,5);// +1 lai nesūta nulles pirms '137' kommandas
+cout<<"first command byte: "<<(*(pt))+0;
 }
 
 void RoombaController::sevenSegmentDisplay(uint8_t number)
