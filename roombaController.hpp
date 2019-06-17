@@ -37,7 +37,9 @@ RoombaController(UartTest* uartDevice);
     void sevenSegmentDisplay(uint8_t number);
 
   private:
-
+int16_t readInt16(uint8_t* beData);
+uint16_t readUint16(uint8_t* beData);
+    
     UartTest* uartDevice;
 
 

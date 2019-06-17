@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 uint16_t ca = roombaController.readBattCapacity();
 uint16_t ch = roombaController.readBattCharge();
 
-cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/ca)<<" %\n";
+cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/++ca)<<" %\n";
     }
         else if(!command.compare("turn r")){
         roombaController.drive(50,-1);
@@ -101,6 +101,10 @@ cout<<"batt ca: "<<ca<< ", ch: "<<ch<<" left: "<<(100*ch/ca)<<" %\n";
         else if(!command.compare("angle")){
         int16_t ang = roombaController.readAngle();
         cout<<"angle: "<<ang;
+        }
+     else if(!command.compare("lbumps")){
+        uint8_t lb = roombaController.readLightBumps();
+        cout<<"light bumps: "<<lb;
         }
     }
     uartTest.waitUartThreadsEnd();
