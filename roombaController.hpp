@@ -23,7 +23,7 @@ public:
 
 
 
-RoombaController(UartTest* uartDevice);
+    RoombaController(UartTest* uartDevice);
     uint8_t readLightBumps();
     uint8_t readBumpsnWheelDrops();
 
@@ -36,9 +36,9 @@ RoombaController(UartTest* uartDevice);
     void drive(int16_t velocity, int16_t radius);
     void sevenSegmentDisplay(uint8_t number);
 
-  private:
-int16_t readInt16(uint8_t* beData);
-uint16_t readUint16(uint8_t* beData);
+private:
+    int16_t readInt16(uint8_t* beData);
+    uint16_t readUint16(uint8_t* beData);
     
     UartTest* uartDevice;
 
