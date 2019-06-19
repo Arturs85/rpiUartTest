@@ -3,11 +3,14 @@
 
 
 RoombaController* RoombaBehaviour::roombaController=0;
+LocalMap* RoombaBehaviour::localMap=0;
+
 bool RoombaBehaviour::isRunning=true;
 
-RoombaBehaviour::RoombaBehaviour(RoombaController *roombaController)
+RoombaBehaviour::RoombaBehaviour(RoombaController *roombaController,LocalMap* localMap)
 {
     RoombaBehaviour::roombaController = roombaController;
+    RoombaBehaviour::localMap= localMap;
     startThread();
 }
 
@@ -21,7 +24,7 @@ void RoombaBehaviour::startThread()
 
     }
     else{
-        cout<<"rooba Behaviour thread started";
+        cout<<"roomba Behaviour thread started\n";
 
     }
 }
@@ -31,22 +34,24 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
 
     while(isRunning){
         uint8_t lb = roombaController->readLightBumps();
-        uint8_t bwd = roombaController->readBumpsnWheelDrops();
+//        uint8_t bwd = roombaController->readBumpsnWheelDrops();
 
-        if(lb!=0){
-            usleep(1000);
-            lb = roombaController->readLightBumps();
-            if(lb!=0)//double check
-            {
-                roombaController->drive(50,1);
-                usleep(1000000);
-            }
+//        if(lb!=0){
+//            usleep(1000);
+//            lb = roombaController->readLightBumps();
+//            if(lb!=0)//double check
+//            {
+//                roombaController->drive(50,1);
+//                usleep(1000000);
+//            }
 
 
-        }else
-        {
-            roombaController->drive(50,32767);
-        }
+//        }else
+//        {
+//            roombaController->drive(50,32767);
+//        }
+
+        localMap->lightBumps=lb;
         usleep(15000);
     }
 }

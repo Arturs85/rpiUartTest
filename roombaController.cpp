@@ -122,6 +122,24 @@ void RoombaController::sevenSegmentDisplay(uint8_t number)
 {
 
 }
+
+void RoombaController::startSafe()
+{
+    uartDevice->setDataToTransmit(startSafeRequest);
+}
+
+void RoombaController::startFull()
+{
+    uartDevice->setDataToTransmit(startFullRequest);
+
+}
+
+void RoombaController::shutDown()
+{
+    uartDevice->setDataToTransmit(endRequest);
+cout<<"sent power off command\n";
+}
+
 int16_t RoombaController::readInt16(uint8_t* beData)
 {
     uint8_t leData[2]={beData[1],beData[0]};

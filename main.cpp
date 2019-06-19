@@ -9,9 +9,31 @@
 #include <vector>
 #include "roombaController.hpp"
 #include "roombaBehaviour.hpp"
+#include "localMap.hpp"
 
-int main(int argc, char** argv)
+class MyApp: public wxApp
 {
+ public:
+    bool OnInit();
+
+void OnClose(wxCloseEvent &event);
+       wxFrame *frame;
+       LocalMap* localMap;
+       UartTest uartTest;
+       RoombaBehaviour* roombaBehaviour;
+      static RoombaController* roombaController;
+
+public:
+int main(int ac,char**av);
+
+};
+IMPLEMENT_APP(MyApp)
+
+RoombaController* MyApp::roombaController=0;
+
+int MyApp::main(int argc, char** av)
+{
+
     printf("main started\n");
 
     UartTest uartTest;
@@ -28,8 +50,7 @@ int main(int argc, char** argv)
     //uartTest.setDataToTransmit(arr, 9);
     //keyboard reading
 
-
-    while(1){
+    while(0){
         std::string command;
         getline (cin, command);
 
@@ -110,11 +131,81 @@ int main(int argc, char** argv)
             cout<<"light bumps: "<<lb;
         }
         else if(!command.compare("roam")){
-            roombaBehaviour = new RoombaBehaviour(&roombaController);
+            roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
         }
     }
     uartTest.waitUartThreadsEnd();
 
     return 0;
 }
+
+void exit_handler(int s){
+           printf("Caught signal %d\n",s);
+MyApp::roombaController->shutDown();
+           exit(1);
+
+}
+
+void MyApp::OnClose(wxCloseEvent &event){
+roombaController->shutDown();
+cout<<"OnClose called\n";
+  //  Destroy();
+
+}
+
+bool MyApp::OnInit()
+{
+
+    struct sigaction sigIntHandler;
+
+       sigIntHandler.sa_handler = exit_handler;
+       sigemptyset(&sigIntHandler.sa_mask);
+       sigIntHandler.sa_flags = 0;
+
+       sigaction(SIGINT, &sigIntHandler, NULL);
+
+
+
+
+    uartTest.initialize();
+    uartTest.startReceiveing();//starts receiving and sending threads
+    roombaController=new RoombaController(&uartTest);
+
+    wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+    frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello wxDC"), wxPoint(50,50), wxSize(800,600));
+
+    localMap = new LocalMap( (wxFrame*) frame );
+    roombaBehaviour = new RoombaBehaviour(roombaController,localMap);
+
+    sizer->Add(localMap, 1, wxEXPAND);
+
+    frame->SetSizer(sizer);
+    frame->SetAutoLayout(true);
+
+    frame->Show();
+   // main(0,0);
+
+   roombaController->startSafe();
+
+    return true;
+}
+
+BEGIN_EVENT_TABLE(LocalMap, wxPanel)
+// some useful events
+/*
+ EVT_MOTION(BasicDrawPane::mouseMoved)
+ EVT_LEFT_DOWN(BasicDrawPane::mouseDown)
+ EVT_LEFT_UP(BasicDrawPane::mouseReleased)
+ EVT_RIGHT_DOWN(BasicDrawPane::rightClick)
+ EVT_LEAVE_WINDOW(BasicDrawPane::mouseLeftWindow)
+ EVT_KEY_DOWN(BasicDrawPane::keyPressed)
+ EVT_KEY_UP(BasicDrawPane::keyReleased)
+ EVT_MOUSEWHEEL(BasicDrawPane::mouseWheelMoved)
+ */
+
+// catch paint events
+EVT_CLOSE(MyApp::OnClose)
+EVT_PAINT(LocalMap::paintEvent)
+
+END_EVENT_TABLE()
 

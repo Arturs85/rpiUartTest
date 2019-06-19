@@ -218,7 +218,7 @@ void UartTest::setDataToTransmit(char* dataPtr, int noOfBytes){
     pthread_mutex_lock( &mutexSend );
     memcpy(&tx_buffer[0],dataPtr,noOfBytes);
     tx_size = noOfBytes;
-    printf("data set for sending\n");
+   // printf("data set for sending\n");
     pthread_mutex_unlock(&mutexSend);
 }
 
@@ -227,7 +227,7 @@ void UartTest::setDataToTransmit(vector<uint8_t> comm){
 
     memcpy(&tx_buffer[0], &comm[0], comm.size());
     tx_size = comm.size();
-    printf("data set for sending\n");
+    //printf("data set for sending\n");
     pthread_mutex_unlock(&mutexSend);
 }
 
