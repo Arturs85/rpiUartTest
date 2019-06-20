@@ -4,6 +4,8 @@
 
 RoombaController* RoombaBehaviour::roombaController=0;
 LocalMap* RoombaBehaviour::localMap=0;
+pthread_mutex_t RoombaBehaviour::mutexGUIData = PTHREAD_MUTEX_INITIALIZER;
+
 
 bool RoombaBehaviour::isRunning=true;
 
@@ -34,6 +36,9 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
 
     while(isRunning){
         uint8_t lb = roombaController->readLightBumps();
+uint16_t ca = roombaController->readBattCapacity();
+            uint16_t ch = roombaController->readBattCharge();
+
 //        uint8_t bwd = roombaController->readBumpsnWheelDrops();
 
 //        if(lb!=0){
@@ -50,8 +55,10 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
 //        {
 //            roombaController->drive(50,32767);
 //        }
+         localMap->bat=(100*ch/++ca);
 
         localMap->lightBumps=lb;
+        //localMap->Refresh();
         usleep(15000);
     }
 }

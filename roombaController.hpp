@@ -20,9 +20,12 @@ public:
     const vector<uint8_t> bumpsRequest{142,7};
     const vector<uint8_t> distanceRequest{142,19};
     const vector<uint8_t> angleRequest{142,20};
-    const vector<uint8_t> startSafeRequest{128,131};
+    const vector<uint8_t> startRequest{128, 131};
+    const vector<uint8_t> safeRequest{131};
+    
     const vector<uint8_t> startFullRequest{128,132};
     const vector<uint8_t> endRequest{133};
+const vector<uint8_t> segmRequest{164, 65,66,67,68};
 
 
 

@@ -30,11 +30,10 @@ class LocalMap :public wxPanel
     typedef struct Point {float x; float y;} Point;
 public:
     uint8_t lightBumps=255;
-
+uint8_t bat =0;
     LocalMap(wxFrame* parent);
     void paintEvent(wxPaintEvent & evt);
     void paintNow();
-
 
     void render(wxDC& dc);
     DECLARE_EVENT_TABLE()
@@ -42,6 +41,7 @@ public:
     void updateObstacles(int16_t dDist,int16_t dAngle);
 
 private:
+//wxTimer timerForRefresh;
     vector<Point> obstacles;
 
     int16_t previousXmm;

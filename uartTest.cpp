@@ -122,7 +122,7 @@ void* UartTest::receive(void* arg)
             {
                 //Bytes received
                 //rx_buffer[rx_length] = '\0';
-                printf("%i bytes read : \n", rx_length);//, rx_buffer);
+              //  printf("%i bytes read : \n", rx_length);//, rx_buffer);
                 pthread_mutex_lock( &mutexReceive );
 
                 for(int i =0;i<rx_length;i++){
@@ -200,10 +200,10 @@ void* UartTest::sendingLoop(void* arg){
             pthread_mutex_lock( &mutexSend );
             if(tx_size)
             {
-                printf("sending data\n");
+              //  printf("sending data\n");
 
                 int count = write(uart0_filestream, tx_buffer, tx_size);		//Filestream, bytes to write, number of bytes to write
-                printf("sent %d bytes \n",count);
+              //  printf("sent %d bytes \n",count);
 
                 tx_size=0;
             }

@@ -20,7 +20,7 @@ private:
     static RoombaController* roombaController;
     static LocalMap* localMap;
     pthread_t roombaBehaviourThread;
-    // static pthread_mutex_t mutexSend;
+    static pthread_mutex_t mutexGUIData;
 
     void startThread();
     static void* behaviourLoop(void* arg);

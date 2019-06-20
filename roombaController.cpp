@@ -120,12 +120,21 @@ void RoombaController::drive(int16_t velocity, int16_t radius)
 
 void RoombaController::sevenSegmentDisplay(uint8_t number)
 {
-
+ vector<uint8_t> ch;
+ ch.push_back(164);
+ ch.push_back(number++); //temp
+ch.push_back(number++);
+ch.push_back(number++);
+ch.push_back(number++);
+uartDevice->setDataToTransmit(segmRequest);
 }
 
 void RoombaController::startSafe()
 {
-    uartDevice->setDataToTransmit(startSafeRequest);
+    uartDevice->setDataToTransmit(startRequest);
+usleep(15000);
+    uartDevice->setDataToTransmit(safeRequest);
+usleep(1000);
 }
 
 void RoombaController::startFull()

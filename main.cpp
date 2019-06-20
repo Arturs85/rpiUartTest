@@ -142,6 +142,7 @@ int MyApp::main(int argc, char** av)
 void exit_handler(int s){
            printf("Caught signal %d\n",s);
 MyApp::roombaController->shutDown();
+        usleep(100000);
            exit(1);
 
 }
@@ -170,7 +171,6 @@ bool MyApp::OnInit()
     uartTest.initialize();
     uartTest.startReceiveing();//starts receiving and sending threads
     roombaController=new RoombaController(&uartTest);
-
     wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
     frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello wxDC"), wxPoint(50,50), wxSize(800,600));
 
@@ -186,6 +186,7 @@ bool MyApp::OnInit()
    // main(0,0);
 
    roombaController->startSafe();
+roombaController->sevenSegmentDisplay(65);// use display as ON indicator
 
     return true;
 }
@@ -206,6 +207,6 @@ BEGIN_EVENT_TABLE(LocalMap, wxPanel)
 // catch paint events
 EVT_CLOSE(MyApp::OnClose)
 EVT_PAINT(LocalMap::paintEvent)
-
+//EVT_TIMER(TIMER_ID, LocalMap::OnTimer)
 END_EVENT_TABLE()
 
