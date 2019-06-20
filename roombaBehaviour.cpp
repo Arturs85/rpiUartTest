@@ -58,6 +58,7 @@ uint16_t ca = roombaController->readBattCapacity();
          localMap->bat=(100*ch/++ca);
 
         localMap->lightBumps=lb;
+        localMap->addObstacles(lb);
         //localMap->Refresh();
         usleep(15000);
     }

@@ -4,20 +4,20 @@
 
 LocalMap::LocalMap(wxFrame *parent):wxPanel(parent)
 {
-	//timerForRefresh(this,TIMER_ID);
-//timerForRefresh.Start(100);
+    //timerForRefresh(this,TIMER_ID);
+    //timerForRefresh.Start(100);
 }
 
 void LocalMap::paintEvent(wxPaintEvent &evt)
 {
     wxPaintDC dc(this);
-       render(dc);
+    render(dc);
 }
 
 void LocalMap::paintNow()
 {
     wxClientDC dc(this);
-      render(dc);
+    render(dc);
 }
 
 void LocalMap::render(wxDC &dc)
@@ -25,17 +25,17 @@ void LocalMap::render(wxDC &dc)
     // draw some text
     dc.DrawText(wxT("lightBumps: "+std::to_string(lightBumps)), 40, 50);
 
-dc.DrawText(wxT("bat: "+std::to_string(bat)+ "%"), 40, 80);
+    dc.DrawText(wxT("bat: "+std::to_string(bat)+ "%"), 40, 80);
 
     // draw a circle
-//    dc.SetBrush(*wxGREEN_BRUSH); // green filling
-//    dc.SetPen( wxPen( wxColor(255,0,0), 5 ) ); // 5-pixels-thick red outline
-//    dc.DrawCircle( wxPoint(200,100), 25 /* radius */ );
+    //    dc.SetBrush(*wxGREEN_BRUSH); // green filling
+    //    dc.SetPen( wxPen( wxColor(255,0,0), 5 ) ); // 5-pixels-thick red outline
+    //    dc.DrawCircle( wxPoint(200,100), 25 /* radius */ );
 
-//    // draw a rectangle
-//    dc.SetBrush(*wxBLUE_BRUSH); // blue filling
-//    dc.SetPen( wxPen( wxColor(255,175,175), 10 ) ); // 10-pixels-thick pink outline
-//    dc.DrawRectangle( 300, 100, 400, 200 );
+    //    // draw a rectangle
+    //    dc.SetBrush(*wxBLUE_BRUSH); // blue filling
+    //    dc.SetPen( wxPen( wxColor(255,175,175), 10 ) ); // 10-pixels-thick pink outline
+    //    dc.DrawRectangle( 300, 100, 400, 200 );
 
     // draw a line
     dc.SetPen( wxPen( wxColor(0,0,0), 1 ) ); // black line, 3 pixels thick
@@ -43,7 +43,7 @@ dc.DrawText(wxT("bat: "+std::to_string(bat)+ "%"), 40, 80);
     dc.DrawCircle( wxPoint(MAP_SIZE_PX/2, MAP_SIZE_PX/2), ROOMBA_RADIUS_MM/SCALE /* radius */ );
     dc.DrawLine( MAP_SIZE_PX/2, MAP_SIZE_PX/2, MAP_SIZE_PX/2,MAP_SIZE_PX/2-ROOMBA_RADIUS_MM/SCALE ); // draw line across the rectangle
 
-     dc.SetBrush(*wxGREY_BRUSH); // green filling
+    dc.SetBrush(*wxGREY_BRUSH); // green filling
     if(lightBumps&LTB_R)
         dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+241/SCALE, MAP_SIZE_PX/2-65/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
     if(lightBumps&LTB_FR)
@@ -60,14 +60,39 @@ dc.DrawText(wxT("bat: "+std::to_string(bat)+ "%"), 40, 80);
     Refresh();
 }
 
-void LocalMap::updateObstacles(int16_t dDist, int16_t dAngle)
+void LocalMap::updateObstaclePosition(int16_t dDist, int16_t dAngle)
 {
-    for (int i = 0; i < obstacles.size(); ++i) {
-        obstacles.at(i).x = obstacles.at(i).x * std::cos(dAngle)+obstacles.at(i).y * sin(dAngle);
-        obstacles.at(i).y = -obstacles.at(i).x * std::sin(dAngle)+obstacles.at(i).y * cos(dAngle);
-    obstacles.at(i).x += dDist*cos(dAngle);
-    obstacles.at(i).y += dDist*sin(dAngle);
+    for (auto o: obstacles) {
+        o.x = o.x * std::cos(dAngle)+o.y * sin(dAngle);
+        o.y = -o.x * std::sin(dAngle)+o.y * cos(dAngle);
+        o.x += dDist*cos(dAngle);
+        o.y += dDist*sin(dAngle);
 
     }
+}
+
+void LocalMap::addObstacles(uint8_t lightBumps)
+{
+//    int16_t s1 = 31;
+//    int16_t s2 = -31;
+//    s1 = round32(s1);
+//    s2 = round32(s2);
+//    Point p(s1,s2);
+//    obstacles.insert(p);
+//    cout<<s1<<" "<<s2<<" obs size: "<<obstacles.size()<<"\n";
+
+        if(lightBumps&LTB_R)
+            obstacles.insert(Point(round32(241),round(65)));
+        if(lightBumps&LTB_FR)
+            obstacles.insert(Point(round32(176),round32(176)));
+        if(lightBumps&LTB_CR)
+            obstacles.push_back(Point(round32(65),round32(241)));
+        if(lightBumps&LTB_CL)
+            obstacles.push_back(Point(round32(-64),round32(241)));
+        if(lightBumps&LTB_FL)
+            obstacles.push_back(Point(round32(-176),round32(176)));
+        if(lightBumps&LTB_L)
+            obstacles.push_back(Point(round32(-241),round32(65)));
+
 }
 

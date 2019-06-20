@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <cstring>
-#include <vector>
+#include <unordered_set>
 #include <stdint.h>
 #include "wx/wx.h"
 #include "wx/sizer.h"
@@ -27,22 +27,50 @@ class LocalMap :public wxPanel
 
     static constexpr int SCALE = 10; //mm per pixel
 
-    typedef struct Point {float x; float y;} Point;
+    typedef struct Point {
+        int16_t x; int16_t y;
+        Point(int16_t x1, int16_t y1):x(x1),y(y1){}
+    } Point;
+
+    // Custom comparator
+    struct PointsEqual {
+    public:
+        bool operator()(const Point & p1, const Point & p2) const {
+
+            if (p1.x==p2.x && p1.y==p2.y)
+                return true;
+            else
+                return false;
+        }
+    };
+
+    // Custom Hash Functor that will compute the hash on the
+    // passed string objects length
+    struct PointHash {
+    public:
+        size_t operator()(const Point & p) const {
+            int size = p.y*10000+p.x;
+            return std::hash<int>()(size);
+        }
+    };
+
 public:
     uint8_t lightBumps=255;
-uint8_t bat =0;
+    uint8_t bat =0;
     LocalMap(wxFrame* parent);
     void paintEvent(wxPaintEvent & evt);
     void paintNow();
 
     void render(wxDC& dc);
+
+    void updateObstaclePosition(int16_t dDist,int16_t dAngle);
+    void addObstacles(uint8_t lightBumps);
+    static inline int16_t round32(int16_t d){return d&0xffe0;}
     DECLARE_EVENT_TABLE()
 
-    void updateObstacles(int16_t dDist,int16_t dAngle);
-
 private:
-//wxTimer timerForRefresh;
-    vector<Point> obstacles;
+    //wxTimer timerForRefresh;
+    unordered_set<Point,PointHash,PointsEqual> obstacles;
 
     int16_t previousXmm;
     int16_t previousYmm;
