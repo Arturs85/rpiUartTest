@@ -86,13 +86,13 @@ void LocalMap::addObstacles(uint8_t lightBumps)
         if(lightBumps&LTB_FR)
             obstacles.insert(Point(round32(176),round32(176)));
         if(lightBumps&LTB_CR)
-            obstacles.push_back(Point(round32(65),round32(241)));
+            obstacles.insert(Point(round32(65),round32(241)));
         if(lightBumps&LTB_CL)
-            obstacles.push_back(Point(round32(-64),round32(241)));
+            obstacles.insert(Point(round32(-64),round32(241)));
         if(lightBumps&LTB_FL)
-            obstacles.push_back(Point(round32(-176),round32(176)));
+            obstacles.insert(Point(round32(-176),round32(176)));
         if(lightBumps&LTB_L)
-            obstacles.push_back(Point(round32(-241),round32(65)));
+            obstacles.insert(Point(round32(-241),round32(65)));
 
 }
 
