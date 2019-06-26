@@ -7,7 +7,7 @@ include("${wxWidgets_USE_FILE}")
 
 aux_source_directory(. SRC_LIST)
 
-list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp" "localMap.cpp" "main.cpp")
+list(APPEND SRC_LIST "uartTest.cpp" "roombaController.cpp" "roombaBehaviour.cpp" "localMap.cpp" "logfilesaver.cpp" "main.cpp")
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
 set (CMAKE_CXX_FLAGS "-D_DEFAULT_SOURCE=1")

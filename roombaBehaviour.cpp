@@ -1,6 +1,6 @@
 #include "roombaBehaviour.hpp"
 #include <iostream>
-
+#include <ctime>
 
 RoombaController* RoombaBehaviour::roombaController=0;
 LocalMap* RoombaBehaviour::localMap=0;
@@ -8,12 +8,23 @@ pthread_mutex_t RoombaBehaviour::mutexGUIData = PTHREAD_MUTEX_INITIALIZER;
 
 
 bool RoombaBehaviour::isRunning=true;
+LogFileSaver* RoombaBehaviour::logFileSaver=0;
+
 
 RoombaBehaviour::RoombaBehaviour(RoombaController *roombaController,LocalMap* localMap)
 {
+    logFileSaver = new LogFileSaver();
     RoombaBehaviour::roombaController = roombaController;
     RoombaBehaviour::localMap= localMap;
+
     startThread();
+}
+
+RoombaBehaviour::~RoombaBehaviour()
+{
+    if(logFileSaver!=0)
+        logFileSaver->closeFile();
+delete(logFileSaver);
 }
 
 void RoombaBehaviour::startThread()
@@ -37,13 +48,16 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
     while(isRunning){
         uint8_t lb = roombaController->readLightBumps();
         uint8_t bwd = roombaController->readBumpsnWheelDrops();
-int16_t dist = roombaController->readDistance();
-int16_t angle = roombaController->readAngle();
+        int16_t dist = roombaController->readDistance();
+        int16_t angle = roombaController->readAngle();
 
-uint16_t ca = roombaController->readBattCapacity();
-            uint16_t ch = roombaController->readBattCharge();
+        uint16_t ca = roombaController->readBattCapacity();
+        uint16_t ch = roombaController->readBattCharge();
 
-localMap->bat=(100*ch/++ca);
+            long int t = static_cast<long int> (time(NULL));
+            logFileSaver->writeEntry(LogEntry(t,dist,angle,lb));
+
+        localMap->bat=(100*ch/++ca);
 
         localMap->lightBumps=lb;
         localMap->addObstacles(lb);
@@ -51,9 +65,9 @@ localMap->bat=(100*ch/++ca);
 
 
 
-//----------driving----------------
+        //----------driving----------------
 
-//        uint8_t bwd = roombaController->readBumpsnWheelDrops();
+        //        uint8_t bwd = roombaController->readBumpsnWheelDrops();
 
         if(lb!=0){
             usleep(1000);
@@ -70,7 +84,7 @@ localMap->bat=(100*ch/++ca);
             roombaController->drive(50,32767);
         }
 
-//----------drivingEnd----------------
+        //----------drivingEnd----------------
 
         //localMap->Refresh();
         usleep(15000);

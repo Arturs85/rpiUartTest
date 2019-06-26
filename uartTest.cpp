@@ -35,7 +35,7 @@ void UartTest::initialize()
     //											immediately with a failure status if the output can't be written immediately.
     //
     //	O_NOCTTY - When set and path identifies a terminal device, open() shall not cause the terminal device to become the controlling terminal for the process.
-    uart0_filestream = open("/dev/ttyS0", O_RDWR | O_NOCTTY );//O_NDELAY);		//Open in non blocking read/write mode
+    uart0_filestream = open("/dev/ttyS0", O_RDWR | O_NOCTTY );//O_NDELAY);		//Open in  blocking read/write mode
     if (uart0_filestream == -1)
     {
         //ERROR - CAN'T OPEN SERIAL PORT

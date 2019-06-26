@@ -20,7 +20,7 @@ void OnClose(wxCloseEvent &event);
        wxFrame *frame;
        LocalMap* localMap;
        UartTest uartTest;
-       RoombaBehaviour* roombaBehaviour;
+      static RoombaBehaviour* roombaBehaviour;
       static RoombaController* roombaController;
 
 public:
@@ -30,6 +30,8 @@ int main(int ac,char**av);
 IMPLEMENT_APP(MyApp)
 
 RoombaController* MyApp::roombaController=0;
+RoombaBehaviour* MyApp::roombaBehaviour=0;
+
 
 int MyApp::main(int argc, char** av)
 {
@@ -142,7 +144,9 @@ int MyApp::main(int argc, char** av)
 void exit_handler(int s){
            printf("Caught signal %d\n",s);
 MyApp::roombaController->shutDown();
-        usleep(100000);
+if(MyApp::roombaBehaviour!=0)
+    delete(MyApp::roombaBehaviour);
+usleep(100000);
            exit(1);
 
 }
@@ -172,7 +176,7 @@ bool MyApp::OnInit()
     uartTest.startReceiveing();//starts receiving and sending threads
     roombaController=new RoombaController(&uartTest);
     wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
-    frame = new wxFrame((wxFrame *)NULL, -1,  wxT("Hello wxDC"), wxPoint(50,50), wxSize(800,600));
+    frame = new wxFrame((wxFrame *)NULL, -1,  wxT("vsmRoomba with wxWidgets"), wxPoint(50,50), wxSize(800,600));
 
     localMap = new LocalMap( (wxFrame*) frame );
     roombaBehaviour = new RoombaBehaviour(roombaController,localMap);

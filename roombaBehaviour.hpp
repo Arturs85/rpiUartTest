@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include "roombaController.hpp"
 #include "localMap.hpp"
+#include "logfilesaver.hpp"
 
 using namespace std;
 
@@ -15,8 +16,10 @@ class RoombaBehaviour
 {
 public:
     RoombaBehaviour(RoombaController* roombaController,LocalMap* localMap);
+    ~RoombaBehaviour();
     static bool isRunning;
 private:
+    static LogFileSaver* logFileSaver;
     static RoombaController* roombaController;
     static LocalMap* localMap;
     pthread_t roombaBehaviourThread;
