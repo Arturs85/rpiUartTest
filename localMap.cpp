@@ -67,14 +67,17 @@ void LocalMap::render(wxDC &dc)
 
 void LocalMap::updateObstaclePosition(int16_t dDist, int16_t dAngle)
 {
+   obsTemp.clear();
    float dtr = 3.1415926/180;
     for (auto o: obstacles) {
-        o.x = o.x * std::cos(dAngle*dtr)+o.y * sin(dAngle*dtr);
-        o.y = -o.x * std::sin(dAngle*dtr)+o.y * cos(dAngle*dtr);
-        o.x += dDist*cos(dAngle*dtr);
-        o.y += dDist*sin(dAngle*dtr);
-
+     int16_t x = o.x * std::cos(dAngle*dtr)+o.y * sin(dAngle*dtr);
+      int16_t y = -o.x * std::sin(dAngle*dtr)+o.y * cos(dAngle*dtr);
+     x += 13*dDist*cos(dAngle*dtr);
+     y += 13*dDist*sin(dAngle*dtr);
+obsTemp.insert(Point(x,y));
     }
+obstacles=obsTemp;
+
 }
 
 void LocalMap::addObstacles(uint8_t lightBumps)

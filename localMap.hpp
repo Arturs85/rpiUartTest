@@ -71,6 +71,7 @@ public:
 private:
     //wxTimer timerForRefresh;
     unordered_set<Point,PointHash,PointsEqual> obstacles;
+    unordered_set<Point,PointHash,PointsEqual> obsTemp;
 
     int16_t previousXmm;
     int16_t previousYmm;
