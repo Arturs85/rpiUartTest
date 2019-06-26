@@ -185,7 +185,8 @@ bool MyApp::OnInit()
     frame->Show();
    // main(0,0);
 
-   roombaController->startSafe();
+   roombaController->startFull();
+   
 roombaController->sevenSegmentDisplay(65);// use display as ON indicator
 
     return true;

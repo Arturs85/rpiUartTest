@@ -44,29 +44,35 @@ void LocalMap::render(wxDC &dc)
     dc.DrawLine( MAP_SIZE_PX/2, MAP_SIZE_PX/2, MAP_SIZE_PX/2,MAP_SIZE_PX/2-ROOMBA_RADIUS_MM/SCALE ); // draw line across the rectangle
 
     dc.SetBrush(*wxGREY_BRUSH); // green filling
-    if(lightBumps&LTB_R)
-        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+241/SCALE, MAP_SIZE_PX/2-65/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
-    if(lightBumps&LTB_FR)
-        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+176/SCALE, MAP_SIZE_PX/2-176/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
-    if(lightBumps&LTB_CR)
-        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+65/SCALE, MAP_SIZE_PX/2-241/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
-    if(lightBumps&LTB_CL)
-        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-64/SCALE, MAP_SIZE_PX/2-241/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
-    if(lightBumps&LTB_FL)
-        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-176/SCALE, MAP_SIZE_PX/2-176/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
-    if(lightBumps&LTB_L)
-        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-241/SCALE, MAP_SIZE_PX/2-65/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+    //if(lightBumps&LTB_R)
+        //dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+241/SCALE, MAP_SIZE_PX/2-65/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+    //if(lightBumps&LTB_FR)
+        //dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+176/SCALE, MAP_SIZE_PX/2-176/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+    //if(lightBumps&LTB_CR)
+        //dc.DrawCircle( wxPoint(MAP_SIZE_PX/2+65/SCALE, MAP_SIZE_PX/2-241/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+    //if(lightBumps&LTB_CL)
+        //dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-64/SCALE, MAP_SIZE_PX/2-241/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+    //if(lightBumps&LTB_FL)
+        //dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-176/SCALE, MAP_SIZE_PX/2-176/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+    //if(lightBumps&LTB_L)
+        //dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-241/SCALE, MAP_SIZE_PX/2-65/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+
+    for (auto o: obstacles) {
+        dc.DrawCircle( wxPoint(MAP_SIZE_PX/2-o.x/SCALE, MAP_SIZE_PX/2-o.y/SCALE), CELL_SIZE_MM/SCALE /* radius */ );
+
+}
 
     Refresh();
 }
 
 void LocalMap::updateObstaclePosition(int16_t dDist, int16_t dAngle)
 {
+   float dtr = 3.1415926/180;
     for (auto o: obstacles) {
-        o.x = o.x * std::cos(dAngle)+o.y * sin(dAngle);
-        o.y = -o.x * std::sin(dAngle)+o.y * cos(dAngle);
-        o.x += dDist*cos(dAngle);
-        o.y += dDist*sin(dAngle);
+        o.x = o.x * std::cos(dAngle*dtr)+o.y * sin(dAngle*dtr);
+        o.y = -o.x * std::sin(dAngle*dtr)+o.y * cos(dAngle*dtr);
+        o.x += dDist*cos(dAngle*dtr);
+        o.y += dDist*sin(dAngle*dtr);
 
     }
 }

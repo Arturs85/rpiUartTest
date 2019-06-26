@@ -35,7 +35,7 @@ void UartTest::initialize()
     //											immediately with a failure status if the output can't be written immediately.
     //
     //	O_NOCTTY - When set and path identifies a terminal device, open() shall not cause the terminal device to become the controlling terminal for the process.
-    uart0_filestream = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY);		//Open in non blocking read/write mode
+    uart0_filestream = open("/dev/ttyS0", O_RDWR | O_NOCTTY );//O_NDELAY);		//Open in non blocking read/write mode
     if (uart0_filestream == -1)
     {
         //ERROR - CAN'T OPEN SERIAL PORT
@@ -127,11 +127,11 @@ void* UartTest::receive(void* arg)
 
                 for(int i =0;i<rx_length;i++){
                     rxframe.push_back(rx_buffer[i]);
-                    cout<<+rx_buffer[i]<<" ";
+          //          cout<<+rx_buffer[i]<<" ";
                 }
                 pthread_mutex_unlock( &mutexReceive );
 
-                cout<<"\n";
+         //       cout<<"\n";
             }
         }//end while
         //printf("read returns %d\n", rx_length);

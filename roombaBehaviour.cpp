@@ -37,11 +37,19 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
     while(isRunning){
         uint8_t lb = roombaController->readLightBumps();
         uint8_t bwd = roombaController->readBumpsnWheelDrops();
+int16_t dist = roombaController->readDistance();
+int16_t angle = roombaController->readAngle();
 
 uint16_t ca = roombaController->readBattCapacity();
             uint16_t ch = roombaController->readBattCharge();
-int16_t dist = roombaController->readDistance();
-int16_t angle = roombaController->readAngle();
+
+localMap->bat=(100*ch/++ca);
+
+        localMap->lightBumps=lb;
+        localMap->addObstacles(lb);
+        localMap->updateObstaclePosition(dist,angle);
+
+
 
 //----------driving----------------
 
@@ -64,11 +72,6 @@ int16_t angle = roombaController->readAngle();
 
 //----------drivingEnd----------------
 
-localMap->bat=(100*ch/++ca);
-
-        localMap->lightBumps=lb;
-        localMap->addObstacles(lb);
-        localMap->updateObstaclePosition(dist,angle);
         //localMap->Refresh();
         usleep(15000);
     }
