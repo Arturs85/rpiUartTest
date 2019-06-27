@@ -39,16 +39,21 @@ const vector<uint8_t> segmRequest{164, 65,66,67,68};
     int16_t readDistance();
     int16_t readAngle();
 
-    void drive(int16_t velocity, int16_t radius);
+ static   void drive(int16_t velocity, int16_t radius);
     void sevenSegmentDisplay(uint8_t number);
 void startSafe();
 void startFull();
 void shutDown();
+
+static void driveForward();
+static void turnLeft();
+static void stopMoving();
+
 private:
     int16_t readInt16(uint8_t* beData);
     uint16_t readUint16(uint8_t* beData);
     
-    UartTest* uartDevice;
+   static UartTest* uartDevice;
 
 
 };

@@ -13,18 +13,18 @@
 
 class MyApp: public wxApp
 {
- public:
+public:
     bool OnInit();
 
-void OnClose(wxCloseEvent &event);
-       wxFrame *frame;
-       LocalMap* localMap;
-       UartTest uartTest;
-      static RoombaBehaviour* roombaBehaviour;
-      static RoombaController* roombaController;
+    void OnClose(wxCloseEvent &event);
+    wxFrame *frame;
+    LocalMap* localMap;
+    UartTest uartTest;
+    static RoombaBehaviour* roombaBehaviour;
+    static RoombaController* roombaController;
 
 public:
-int main(int ac,char**av);
+    int main(int ac,char**av);
 
 };
 IMPLEMENT_APP(MyApp)
@@ -142,19 +142,19 @@ int MyApp::main(int argc, char** av)
 }
 
 void exit_handler(int s){
-           printf("Caught signal %d\n",s);
-MyApp::roombaController->shutDown();
-if(MyApp::roombaBehaviour!=0)
-    delete(MyApp::roombaBehaviour);
-usleep(100000);
-           exit(1);
+    printf("Caught signal %d\n",s);
+    MyApp::roombaController->shutDown();
+    if(MyApp::roombaBehaviour!=0)
+        delete(MyApp::roombaBehaviour);
+    usleep(100000);
+    exit(1);
 
 }
 
 void MyApp::OnClose(wxCloseEvent &event){
-roombaController->shutDown();
-cout<<"OnClose called\n";
-  //  Destroy();
+    roombaController->shutDown();
+    cout<<"OnClose called\n";
+    //  Destroy();
 
 }
 
@@ -163,11 +163,11 @@ bool MyApp::OnInit()
 
     struct sigaction sigIntHandler;
 
-       sigIntHandler.sa_handler = exit_handler;
-       sigemptyset(&sigIntHandler.sa_mask);
-       sigIntHandler.sa_flags = 0;
+    sigIntHandler.sa_handler = exit_handler;
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
 
-       sigaction(SIGINT, &sigIntHandler, NULL);
+    sigaction(SIGINT, &sigIntHandler, NULL);
 
 
 
@@ -187,11 +187,11 @@ bool MyApp::OnInit()
     frame->SetAutoLayout(true);
 
     frame->Show();
-   // main(0,0);
+    // main(0,0);
 
-   roombaController->startFull();
-   
-roombaController->sevenSegmentDisplay(65);// use display as ON indicator
+    roombaController->startFull();
+
+    roombaController->sevenSegmentDisplay(65);// use display as ON indicator
 
     return true;
 }
@@ -208,6 +208,10 @@ BEGIN_EVENT_TABLE(LocalMap, wxPanel)
  EVT_KEY_UP(BasicDrawPane::keyReleased)
  EVT_MOUSEWHEEL(BasicDrawPane::mouseWheelMoved)
  */
+EVT_BUTTON ( BUTTON_left, LocalMap::buttonHandler )
+EVT_BUTTON ( BUTTON_fwd, LocalMap::buttonHandler )
+EVT_BUTTON ( BUTTON_stop, LocalMap::buttonHandler )
+
 
 // catch paint events
 EVT_CLOSE(MyApp::OnClose)

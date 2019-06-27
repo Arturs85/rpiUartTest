@@ -65,12 +65,17 @@ public:
 
     void updateObstaclePosition(int16_t dDist,int16_t dAngle);
     void addObstacles(uint8_t lightBumps);
+    void buttonHandler(wxCommandEvent& event );
+
     static inline int16_t round32(int16_t d){return d&0xffe0;}
+    wxButton *fwdButton;
+    wxButton *turnLeftButton;
+    wxButton *stopMovingButton;
     DECLARE_EVENT_TABLE()
 
-private:
-    //wxTimer timerForRefresh;
-    unordered_set<Point,PointHash,PointsEqual> obstacles;
+    private:
+        //wxTimer timerForRefresh;
+        unordered_set<Point,PointHash,PointsEqual> obstacles;
     unordered_set<Point,PointHash,PointsEqual> obsTemp;
 
     int16_t previousXmm;
@@ -78,7 +83,13 @@ private:
 
 };
 
+enum
+{
+    BUTTON_fwd = wxID_HIGHEST + 1, // declares an id which will be used to call our button
+    BUTTON_left = wxID_HIGHEST + 2, // declares an id which will be used to call our button
+    BUTTON_stop = wxID_HIGHEST + 3 // declares an id which will be used to call our button
 
+};
 
 
 

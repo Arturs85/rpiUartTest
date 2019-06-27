@@ -69,20 +69,20 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
 
         //        uint8_t bwd = roombaController->readBumpsnWheelDrops();
 
-        if(lb!=0){
-            usleep(1000);
-            lb = roombaController->readLightBumps();
-            if(lb!=0)//double check
-            {
-                roombaController->drive(50,1);
-                usleep(1000000);
-            }
+//        if(lb!=0){
+//            usleep(1000);
+//            lb = roombaController->readLightBumps();
+//            if(lb!=0)//double check
+//            {
+//                roombaController->drive(50,1);
+//                usleep(1000000);
+//            }
 
 
-        }else
-        {
-            roombaController->drive(50,32767);
-        }
+//        }else
+//        {
+//            roombaController->drive(50,32767);
+//        }
 
         //----------drivingEnd----------------
 
