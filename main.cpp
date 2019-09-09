@@ -175,7 +175,8 @@ bool MyApp::OnInit()
     sigaction(SIGINT, &sigIntHandler, NULL);
 
 
-
+UwbMsgListener uwbMsgListener; // start uwb device
+	uwbMsgListener.initialize();
 
     uartTest.initialize();
     uartTest.startReceiveing();//starts receiving and sending threads
