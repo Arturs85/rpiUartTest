@@ -73,12 +73,13 @@ void LocalMap::render(wxDC &dc)
 void LocalMap::updateObstaclePosition(int16_t dDist, int16_t dAngle)
 {
     obsTemp.clear();
-    float dtr = 3.1415926/180;
+    float dtr = 3.1415926/70;//should be pi/180, but roomba returns deg/3
+ dAngle = -dAngle;
     for (auto o: obstacles) {
         int16_t x = o.x * std::cos(dAngle*dtr)+o.y * sin(dAngle*dtr);
         int16_t y = -o.x * std::sin(dAngle*dtr)+o.y * cos(dAngle*dtr);
-        x += 13*dDist*cos(dAngle*dtr);
-        y += 13*dDist*sin(dAngle*dtr);
+        y += 13*dDist*cos(dAngle*dtr);
+        x += 13*dDist*sin(dAngle*dtr);
         obsTemp.insert(Point(x,y));
     }
     obstacles=obsTemp;
@@ -95,24 +96,24 @@ void LocalMap::addObstacles(uint8_t lightBumps)
     //    obstacles.insert(p);
     //    cout<<s1<<" "<<s2<<" obs size: "<<obstacles.size()<<"\n";
 
-    if(lightBumps&LTB_R)
-        obstacles.insert(Point(round32(241),round(65)));
-    if(lightBumps&LTB_FR)
-        obstacles.insert(Point(round32(176),round32(176)));
-    if(lightBumps&LTB_CR)
-        obstacles.insert(Point(round32(65),round32(241)));
-    if(lightBumps&LTB_CL)
-        obstacles.insert(Point(round32(-64),round32(241)));
-    if(lightBumps&LTB_FL)
-        obstacles.insert(Point(round32(-176),round32(176)));
     if(lightBumps&LTB_L)
+        obstacles.insert(Point(round32(241),round(65)));
+    if(lightBumps&LTB_FL)
+        obstacles.insert(Point(round32(176),round32(176)));
+    if(lightBumps&LTB_CL)
+        obstacles.insert(Point(round32(65),round32(241)));
+    if(lightBumps&LTB_CR)
+        obstacles.insert(Point(round32(-64),round32(241)));
+    if(lightBumps&LTB_FR)
+        obstacles.insert(Point(round32(-176),round32(176)));
+    if(lightBumps&LTB_R)
         obstacles.insert(Point(round32(-241),round32(65)));
 
 }
 
 void LocalMap::buttonHandler(wxCommandEvent &event)
 {
-cout<<"eventId: "<<event.GetId()<<" int: "<<event.GetInt()<<"\n";
+//cout<<"eventId: "<<event.GetId()<<" int: "<<event.GetInt()<<"\n";
 
 if(event.GetId()==BUTTON_fwd)
 RoombaController::driveForward();

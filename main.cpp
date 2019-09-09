@@ -146,6 +146,7 @@ void exit_handler(int s){
     MyApp::roombaController->shutDown();
     if(MyApp::roombaBehaviour!=0)
         delete(MyApp::roombaBehaviour);
+ // uartTest.waitUartThreadsEnd();
     usleep(100000);
     exit(1);
 

@@ -35,7 +35,7 @@ void UartTest::initialize()
     //											immediately with a failure status if the output can't be written immediately.
     //
     //	O_NOCTTY - When set and path identifies a terminal device, open() shall not cause the terminal device to become the controlling terminal for the process.
-    uart0_filestream = open("/dev/ttyS0", O_RDWR | O_NOCTTY );//O_NDELAY);		//Open in  blocking read/write mode
+    uart0_filestream = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY);		//Open in  blocking read/write mode
     if (uart0_filestream == -1)
     {
         //ERROR - CAN'T OPEN SERIAL PORT
@@ -58,6 +58,9 @@ void UartTest::initialize()
     options.c_iflag = IGNPAR;
     options.c_oflag = 0;
     options.c_lflag = 0;
+    options.c_cc[VTIME]=0;
+    options.c_cc[VMIN]=0;
+    
     tcflush(uart0_filestream, TCIFLUSH);
     tcsetattr(uart0_filestream, TCSANOW, &options);
 
@@ -100,23 +103,32 @@ void* UartTest::receive(void* arg)
     //----- CHECK FOR ANY RX BYTES -----
     if (uart0_filestream != -1)
     {
-        while(1){
-            struct timespec ts = {0, 15000000L };
+                   struct timespec ts = {0, 15000000L };
 
-            nanosleep (&ts, NULL);//sleep 15 ms
+        while(1){
+
             // Read up to 255 characters from the port if they are there
 
             unsigned char rx_buffer[256];
+                            pthread_mutex_lock( &mutexReceive );
+
             int rx_length = read(uart0_filestream, (void*)rx_buffer, 255);		//Filestream, buffer to store in, number of bytes to read (max)
+                  
+                            pthread_mutex_unlock( &mutexReceive );
+
             if (rx_length < 0)
             {
                 //An error occured (will occur if there are no bytes)
+                            nanosleep (&ts, NULL);//sleep 15 ms
+
                 continue;
             }
             else if (rx_length == 0)
             {
                 //No data waiting
-                continue;
+                
+                            nanosleep (&ts, NULL);//sleep 15 ms
+			continue;
             }
             else if(rx_length>0)
             {
@@ -129,10 +141,12 @@ void* UartTest::receive(void* arg)
                     rxframe.push_back(rx_buffer[i]);
           //          cout<<+rx_buffer[i]<<" ";
                 }
-                pthread_mutex_unlock( &mutexReceive );
+                        pthread_mutex_unlock( &mutexReceive );
 
          //       cout<<"\n";
             }
+            nanosleep (&ts, NULL);//sleep 15 ms
+
         }//end while
         //printf("read returns %d\n", rx_length);
     }
@@ -197,38 +211,39 @@ void* UartTest::sendingLoop(void* arg){
     while(1){
         if (uart0_filestream != -1)
         {
-            pthread_mutex_lock( &mutexSend );
+            pthread_mutex_lock( &mutexReceive );
             if(tx_size)
             {
               //  printf("sending data\n");
 
                 int count = write(uart0_filestream, tx_buffer, tx_size);		//Filestream, bytes to write, number of bytes to write
-              //  printf("sent %d bytes \n",count);
+               if(count!=tx_size)
+                printf("sent %d bytes of %d\n",count, tx_size);
 
                 tx_size=0;
             }
-            pthread_mutex_unlock(&mutexSend);
-            struct timespec ts = {0, 15000000L };
+            pthread_mutex_unlock(&mutexReceive);
+            struct timespec ts = {0, 1500000L };
 
             nanosleep (&ts, NULL);
         }
     }
 }
 void UartTest::setDataToTransmit(char* dataPtr, int noOfBytes){
-    pthread_mutex_lock( &mutexSend );
+    pthread_mutex_lock( &mutexReceive );
     memcpy(&tx_buffer[0],dataPtr,noOfBytes);
     tx_size = noOfBytes;
-   // printf("data set for sending\n");
-    pthread_mutex_unlock(&mutexSend);
+    //printf("data set for sending\n");
+    pthread_mutex_unlock(&mutexReceive);
 }
 
 void UartTest::setDataToTransmit(vector<uint8_t> comm){
-    pthread_mutex_lock( &mutexSend );
+    pthread_mutex_lock( &mutexReceive );
 
     memcpy(&tx_buffer[0], &comm[0], comm.size());
     tx_size = comm.size();
     //printf("data set for sending\n");
-    pthread_mutex_unlock(&mutexSend);
+    pthread_mutex_unlock(&mutexReceive);
 }
 
 void UartTest::waitUartThreadsEnd()

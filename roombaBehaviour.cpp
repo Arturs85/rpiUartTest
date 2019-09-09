@@ -87,6 +87,6 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
         //----------drivingEnd----------------
 
         //localMap->Refresh();
-        usleep(15000);
+        usleep(250000);
     }
 }
