@@ -1,5 +1,6 @@
 
 #include "uartTest.h"
+	#include "uwbmsglistener.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -40,6 +41,9 @@ int MyApp::main(int argc, char** av)
 
     UartTest uartTest;
     uartTest.initialize();
+
+UwbMsgListener uwbMsgListener; // start uwb device
+	uwbMsgListener.initialize();
 
     //uartTest.send();
     uartTest.startReceiveing();//starts receiving and sending threads
