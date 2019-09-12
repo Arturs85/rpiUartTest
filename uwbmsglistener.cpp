@@ -284,6 +284,16 @@ void UwbMsgListener::initialize()
     else
         printf ("unable to get device hostname\n");
 
+    VSMMessage vsmmsg={VSMSubsystems::S1,S2,"testParam",123};
+    string s =vsmmsg.toString();
+    cout<<s<<"/n";
+
+    VSMMessage m;
+    int conversionOk =VSMMessage::stringToVsmMessage(s,&m);
+    if(conversionOk){
+    cout <<"string to msg conversion--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
+    }
+
     //if (argc > 2 && strcmp(argv[1], "average") == 0) {
     //report_average = 1;
     //set_conio_terminal_mode();
@@ -373,6 +383,13 @@ void *UwbMsgListener::receivingLoop(void *arg)
                 std::size_t length = frame_len;
                 char* rxData = reinterpret_cast<char*>(rx_buffer);
                 string rxString= string(rxData,length);
+                VSMMessage m;
+                int res =VSMMessage::stringToVsmMessage(rxString,&m);
+                if(res){
+                rxDeque.push_back(m);
+                cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
+                cout <<"rx valid msg--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
+                }
                 cout<<"rx: "<<rxString<<"\n";
 
                 t = clock();
