@@ -29,8 +29,13 @@ typedef struct VSMMessage {VSMSubsystems sender; VSMSubsystems receiver;string p
                                                   static int stringToVsmMessage(std::string msgStr, VSMMessage *destMsg){
                                                       vector<string> msgFields = split(msgStr);
                                                       if(msgFields.size()!=4) return 0;
+                                                      try{
                                                       destMsg->sender =static_cast<VSMSubsystems>(stoi(msgFields[0]));
                                                       destMsg->receiver =static_cast<VSMSubsystems>(stoi(msgFields[1]));
+												  }catch(std::invalid_argument){
+													  cout<<"stoi error: "<<msgFields[0]<<"\n";
+													  return 0;
+													  }
                                                       destMsg->paramName = msgFields[2];
                                                       destMsg->paramValue = stof(msgFields[3]);
                                                       return 1;

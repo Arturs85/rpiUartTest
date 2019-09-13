@@ -87,7 +87,7 @@ static uint32 status_reg = 0;
 /* Delay between frames, in UWB microseconds. See NOTE 4 below. */
 /* This is the delay from Frame RX timestamp to TX reply timestamp used for calculating/setting the DW1000's delayed TX function. This includes the
  * frame length of approximately 2.46 ms with above configuration. */
-#define POLL_RX_TO_RESP_TX_DLY_UUS 7000//2800//2600
+#define POLL_RX_TO_RESP_TX_DLY_UUS 10000//7000//2800//2600
 /* This is the delay from the end of the frame transmission to the enable of the receiver, as programmed for the DW1000's wait for response feature. */
 #define RESP_TX_TO_FINAL_RX_DLY_UUS 700//500
 /* Receive final timeout. See NOTE 5 below. */
@@ -138,7 +138,8 @@ pthread_mutex_t UwbMsgListener::txBufferLock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t UwbMsgListener::dwmDeviceLock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t UwbMsgListener::rangingInitBufferLock = PTHREAD_MUTEX_INITIALIZER;
 
-std::deque<RawTxMessage> UwbMsgListener::txDeque; 
+std::deque<RawTxMessage> UwbMsgListener::txDeque;
+std::deque<VSMMessage> UwbMsgListener::rxDeque;
 std::deque<int> UwbMsgListener::rangingInitDeque;
 
 //struct termios orig_termios;
@@ -286,7 +287,7 @@ void UwbMsgListener::initialize()
 
     VSMMessage vsmmsg={VSMSubsystems::S1,S2,"testParam",123};
     string s =vsmmsg.toString();
-    cout<<s<<"/n";
+    cout<<s<<"\n";
 
     VSMMessage m;
     int conversionOk =VSMMessage::stringToVsmMessage(s,&m);
@@ -382,15 +383,17 @@ void *UwbMsgListener::receivingLoop(void *arg)
             {
                 std::size_t length = frame_len;
                 char* rxData = reinterpret_cast<char*>(rx_buffer);
-                string rxString= string(rxData,length);
+                string rxWHeader=string(rxData,length);
+                string rxString= string(rxWHeader,ALL_MSG_COMMON_LEN,length-2-ALL_MSG_COMMON_LEN);
                 VSMMessage m;
+                                cout<<"rx: "<<rxString<<"\n";
+
                 int res =VSMMessage::stringToVsmMessage(rxString,&m);
                 if(res){
-                rxDeque.push_back(m);
+                rxDeque.push_back(m); // mutex to be added for access to rxdeque
                 cout<<"rxDeque size: "<<rxDeque.size()<<"\n";
                 cout <<"rx valid msg--> sender: "<<m.sender<<" paramName: "<<m.paramName<<" value: "<<m.paramValue<<"\n";
                 }
-                cout<<"rx: "<<rxString<<"\n";
 
                 t = clock();
                 //usleep(100000);

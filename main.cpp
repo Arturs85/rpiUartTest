@@ -137,7 +137,7 @@ UwbMsgListener uwbMsgListener; // start uwb device
             cout<<"light bumps: "<<lb;
         }
         else if(!command.compare("roam")){
-            roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
+          //  roombaBehaviour = new RoombaBehaviour(&roombaController,localMap);
         }
     }
     uartTest.waitUartThreadsEnd();
@@ -177,6 +177,8 @@ bool MyApp::OnInit()
 
 UwbMsgListener uwbMsgListener; // start uwb device
 	uwbMsgListener.initialize();
+uwbMsgListener.startReceiving();
+	uwbMsgListener.startSending();
 
     uartTest.initialize();
     uartTest.startReceiveing();//starts receiving and sending threads
@@ -185,7 +187,7 @@ UwbMsgListener uwbMsgListener; // start uwb device
     frame = new wxFrame((wxFrame *)NULL, -1,  wxT("vsmRoomba with wxWidgets"), wxPoint(50,50), wxSize(800,600));
 
     localMap = new LocalMap( (wxFrame*) frame );
-    roombaBehaviour = new RoombaBehaviour(roombaController,localMap);
+    roombaBehaviour = new RoombaBehaviour(roombaController,localMap,&uwbMsgListener);
 
     sizer->Add(localMap, 1, wxEXPAND);
 

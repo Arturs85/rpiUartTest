@@ -4,6 +4,7 @@
 
 RoombaController* RoombaBehaviour::roombaController=0;
 LocalMap* RoombaBehaviour::localMap=0;
+UwbMsgListener* RoombaBehaviour::uwbMsgListener =0;
 pthread_mutex_t RoombaBehaviour::mutexGUIData = PTHREAD_MUTEX_INITIALIZER;
 
 
@@ -11,12 +12,12 @@ bool RoombaBehaviour::isRunning=true;
 LogFileSaver* RoombaBehaviour::logFileSaver=0;
 
 
-RoombaBehaviour::RoombaBehaviour(RoombaController *roombaController,LocalMap* localMap)
+RoombaBehaviour::RoombaBehaviour(RoombaController *roombaController,LocalMap* localMap,UwbMsgListener* uwbMsgListener)
 {
     logFileSaver = new LogFileSaver();
     RoombaBehaviour::roombaController = roombaController;
     RoombaBehaviour::localMap= localMap;
-
+RoombaBehaviour::uwbMsgListener = uwbMsgListener;
     startThread();
 }
 
@@ -62,8 +63,12 @@ void *RoombaBehaviour::behaviourLoop(void *arg)
         localMap->lightBumps=lb;
         localMap->addObstacles(lb);
         localMap->updateObstaclePosition(dist,angle);
-
-
+if(uwbMsgListener->rxDeque.size()>0){
+VSMMessage msg = uwbMsgListener->rxDeque.back();
+if(msg.paramName=="stop")
+roombaController->stopMoving();
+uwbMsgListener->rxDeque.pop_back();
+}
 
         //----------driving----------------
 
